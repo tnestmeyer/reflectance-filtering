@@ -64,7 +64,7 @@ Additionaly, we provide the following results:
     [Download link](<http://files.is.tue.mpg.de/tnestmeyer/public/reflectance-filtering/results/zoran2015_ordinal_onlyHisTest_smoothed_1x_with_Bi_flat_c15s28_linear.tar.gz>)
    - 3x GF(Zoran et al. 2015, flat)*: `zoran_guided_c3.0s45.0_bi_flat_linear_guided_c3.0s45.0_bi_flat_linear_guided_c3.0s45.0_bi_flat_linear`
     [Download link](<http://files.is.tue.mpg.de/tnestmeyer/public/reflectance-filtering/results/zoran_guided_c3.0s45.0_bi_flat_linear_guided_c3.0s45.0_bi_flat_linear_guided_c3.0s45.0_bi_flat_linear.tar.gz>)
- 
+
 
 
 ## Training the CNN for the direct reflectance prediction
@@ -90,17 +90,17 @@ or any other channel you might find in case this address might be out of service
 
 3. Install the latest caffe:
     <https://github.com/BVLC/caffe>
-    
+
     If you have problems, use malabar, our caffe "flavor", already prepared for the next step:
     <http://files.is.tue.mpg.de/tnestmeyer/public/reflectance-filtering/malabar/malabar.tar.gz>
-    
+
     I installed malabar via `cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_python=ON -DCUDA_TOOLKIT_ROOT_DIR=/is/software/nvidia/cuda-8.0.44 -DUSE_CUDNN=True -DCUDNN_LIBRARY=/is/software/nvidia/cudnn-5.1/lib64/libcudnn.so -DCUDNN_INCLUDE=/is/software/nvidia/cudnn-5.1/include -DCUDA_ARCH_NAME=Kepler ..`
 4. Install barrista, a more convenient python interface to caffe: <https://classner.github.io/barrista/>
 
 5. Install other dependencies (some of which might also be easy to be replaced/removed if unwanted): `simplejson`, `tqdm`, `scipy`.
 6. In `train_with_barrista.py` adapt the paths where to find barrista and caffe (or malabar)
 
-7. To start the actual training, run `barrista_train_test.py` with the parameters of your choice.
+7. To start the actual training, run `python training/train_with_barrista.py` with the parameters of your choice.
    - If you want to only estimate the reflectance intensity (grayscale, as e.g. [Zoran et al. 2015]), use `--RS_est_mode=rDirectly`, otherwise if you want to recover RGB reflectance and shading like [Bell et al. 2014], use `--RS_est_mode=rRelMean`.
    - A training command to train a network with 4 layers, 2^4 filters each, being 1x1 convolutions (0 padding) looks for example like this:
         `python training/train_with_barrista.py --stage=fit --iterations=10000 --batch_size=10 -exp=experiment_name --numLayers=4 --num_filters_log=4 --kernel_pad=0 --RS_est_mode=rDirectly`
