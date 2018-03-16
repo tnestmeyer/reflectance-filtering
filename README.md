@@ -1,5 +1,5 @@
 # Reflectance Adaptive Filtering Improves Intrinsic Image Estimation
-This is the code release for the research project of "Reflectance Adaptive Filtering Improves Intrinsic Image Estimation", which appears at [CVPR 2017](<http://cvpr2017.thecvf.com>) and can be found at <https://arxiv.org/abs/1612.05062>.
+This is the code release for the research project of "Reflectance Adaptive Filtering Improves Intrinsic Image Estimation", which was published in [CVPR 2017](<http://cvpr2017.thecvf.com>) and can be found at <https://arxiv.org/abs/1612.05062>.
 
 It is released under the MIT License, please see `LICENSE.md`.
 
@@ -48,6 +48,7 @@ Methods not available there:
    - [Bi et al. 2015] provide their results on <http://cseweb.ucsd.edu/~bisai/project/siggraph2015.html> for their full intrinsic decomposition pipeline.
 
 Additionaly, we provide the following results:
+
    - L1 flattening: `bi2015_l1_only_flattening_linear` is the result of the pure L1 flattening step we also recap in our paper (not their full pipeline above).
     [Download link](<http://files.is.tue.mpg.de/tnestmeyer/public/reflectance-filtering/results/bi2015_l1_only_flattening_linear.tar.gz>)
    - Direct CNN prediction: `nestmeyer2016_whdrCNN_1109_rDirectly_from_1108_single_channel_wdm_12_06_then_13_08_linear` is what our 1x1 CNN predicts as reflectance
@@ -60,11 +61,34 @@ Additionaly, we provide the following results:
     [Download link](<http://files.is.tue.mpg.de/tnestmeyer/public/reflectance-filtering/results/baseline_translated_0.54_linear.tar.gz>)
    - BF(Bi et al. 2015, flat): `bi2015_l1_final_linear_smoothed_with_Bi_flat_linear`
     [Download link](<http://files.is.tue.mpg.de/tnestmeyer/public/reflectance-filtering/results/bi2015_l1_final_linear_smoothed_with_Bi_flat_linear.tar.gz>)
-   - BF(Zoran et al. 2015, flat)*: `zoran2015_ordinal_onlyHisTest_smoothed_1x_with_Bi_flat_c15s28_linear`
+   - BF(Zoran et al. 2015, flat)* : `zoran2015_ordinal_onlyHisTest_smoothed_1x_with_Bi_flat_c15s28_linear`
     [Download link](<http://files.is.tue.mpg.de/tnestmeyer/public/reflectance-filtering/results/zoran2015_ordinal_onlyHisTest_smoothed_1x_with_Bi_flat_c15s28_linear.tar.gz>)
-   - 3x GF(Zoran et al. 2015, flat)*: `zoran_guided_c3.0s45.0_bi_flat_linear_guided_c3.0s45.0_bi_flat_linear_guided_c3.0s45.0_bi_flat_linear`
+   - 3x GF(Zoran et al. 2015, flat)* : `zoran_guided_c3.0s45.0_bi_flat_linear_guided_c3.0s45.0_bi_flat_linear_guided_c3.0s45.0_bi_flat_linear`
     [Download link](<http://files.is.tue.mpg.de/tnestmeyer/public/reflectance-filtering/results/zoran_guided_c3.0s45.0_bi_flat_linear_guided_c3.0s45.0_bi_flat_linear_guided_c3.0s45.0_bi_flat_linear.tar.gz>)
 
+
+
+## Runtimes
+The runtimes for the plot in Figure 7 are determined in the following way:
+
+For the runtimes of methods that appeared before [Bell et al. (2014)], I used the numbers available at [Sean Bell's project page](<http://opensurfaces.cs.cornell.edu/intrinsic/algorithms/>).
+
+Additionally for [Zoran et al. 2015] in direct mail correspondence, I was told that his runtime is about 10s per image, which he says is faster than what they report in their paper, although I did not find anything about runtime in their paper. This was his message: "The image take about 10 seconds to generate - this is some after optimization we did for the network inference (in the paper we report 24 seconds). The results remain the same for this optimized network."
+
+For [Bi et al. (2015)], I assumed 300s since they say 5-10mins in their paper. I used the same number for "L1-flattening", which is part of their pipeline and is also roughly what I saw when running their code.
+
+For [Zhou et al. (2015)], I assumed 60s, since I got the following reply per mail: "Sure, the average runtime is about 1min per image -- most of the time is spent on the CRF inference."
+
+When using 'flat' as guidance for filtering, I added 300sec to compute 'flat' to the runtime of the algorithm which is filtered. The filtering itself is quite fast. With the given parameters, one step of guided filtering took about 0.08s, and one step of bilateral filtering about 0.687s. Our CNN on the other hand takes about 0.006s per image. In summary, I got the runtimes in seconds (in addition to the runtimes listed on the IIW page):
+
+- 0.006 for Direct CNN prediction
+- 0.693 for BF(CNN, CNN)  # = 0.687+0.006, dominated by bilateral filter
+- 10 for Zoran et al. 2015*
+- 300 for Bi et al. 2015
+- 310.24 for 3x GF(Zoran et al. 2015, flat)*  # = 10+300+0.08*3
+- 300.687 for BF(Bi et al. 2015, flat)  # = 300+0.687 since 'flat' is part of the pipeline for Bi, I assumed only 1x the 300s plus the runtime for the bilateral filter
+- 300.086 for GF(CNN, flat)  # dominated by 'flat' (300s), plus 0.08 for the guided filter, plus 0.006 for our CNN
+- 10^-2.5 for Rescaling to [0.55, 1]  # I just used the lower limit of the figure for its runtime since this affine transformation is more or less instant.
 
 
 ## Training the CNN for the direct reflectance prediction
